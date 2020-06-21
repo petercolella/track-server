@@ -1,4 +1,5 @@
 require('dotenv').config();
+const db = require('./models');
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
@@ -6,6 +7,9 @@ const authRoutes = require('./routes/authRoutes');
 const PORT = 3000;
 
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(authRoutes);
 
 const mongoURI = process.env.MONGODB_URI;
