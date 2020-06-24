@@ -13,4 +13,27 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+router.post('/signin', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(422)
+      .send({ error: 'Email or password was not provided.' });
+  }
+
+  const dbUser = await db.User.findOne({ email });
+
+  if (!dbUser)
+    return res.status(422).send({ error: 'Email or password is incorrect' });
+
+  try {
+    await dbUser.comparePassword(password);
+    const token = jwt.sign({ userId: dbUser._id }, 'MY_SECRET_KEY');
+    res.send({ token });
+  } catch (err) {
+    return res.status(422).send({ error: 'Email or password is incorrect' });
+  }
+});
+
 module.exports = router;
