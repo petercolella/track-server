@@ -35,8 +35,19 @@ userSchema.pre('save', function (next) {
   });
 });
 
-userSchema.methods.comparePassword = async function (inputPassword) {
-  return await bcrypt.compare(inputPassword, this.password);
+userSchema.methods.comparePassword = function (inputPassword) {
+  const user = this;
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(inputPassword, user.password, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      if (!result) {
+        return reject(false);
+      }
+      resolve(true);
+    });
+  });
 };
 
 const User = mongoose.model('User', userSchema);
