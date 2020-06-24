@@ -3,6 +3,7 @@ const db = require('./models');
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
+const requireAuth = require('./middleware/requireAuth');
 
 const PORT = 3000;
 
@@ -25,8 +26,8 @@ mongoose.connection.on('error', err => {
   console.error('Error connection to MongoDB', err);
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello!');
+app.get('/', requireAuth, (req, res) => {
+  res.send(`Your email: ${req.user.email}`);
 });
 
 app.listen(PORT, () => {
