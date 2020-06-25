@@ -12,4 +12,25 @@ router.get('/tracks', async (req, res) => {
   res.send(tracks);
 });
 
+router.post('/tracks', async (req, res) => {
+  const { name, locations } = req.body;
+
+  if (!name || !locations) {
+    return res
+      .status(422)
+      .send({ error: 'Name or locations was not provided.' });
+  }
+
+  try {
+    const dbTrack = await db.Track.create({
+      userId: req.user._id,
+      name,
+      locations
+    });
+    res.send(dbTrack);
+  } catch (err) {
+    res.status(422).res.send({ error: err.message });
+  }
+});
+
 module.exports = router;
